@@ -88,8 +88,8 @@ int main() {
         }
 
         // Устанавливаем лимит для тестирования кода
-        ++cnt;
-        if (cnt > 2000) break;
+        // ++cnt;
+        // if (cnt > 200) break;
 
         // Извлекаем временную метку (если используется для смещения; здесь можно использовать pose)
         double timestamp = extractTimestamp(filePath);
@@ -124,8 +124,9 @@ int main() {
                     worldPt.x += static_cast<float>(pose.x);
                     worldPt.y += static_cast<float>(pose.y);
 
-                    // Добавляем точку в глобальную карту (приращение, например, 10)
-                    globalMap.addPoint(worldPt.x, worldPt.y, 5.0f);
+                    // Добавляем точку в глобальную карту
+                    // !!!!!!!!!! Костыль, зеркалим относительно OY
+                    globalMap.addPoint(-worldPt.x, worldPt.y, 6.0f);
                 }
             }
         }
