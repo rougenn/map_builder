@@ -90,7 +90,6 @@ int main() {
         // Устанавливаем лимит для тестирования кода
         ++cnt;
         if (cnt > 2000) break;
-        if (cnt % 10) continue;
 
         // Извлекаем временную метку (если используется для смещения; здесь можно использовать pose)
         double timestamp = extractTimestamp(filePath);
@@ -106,21 +105,25 @@ int main() {
 
 
         // Обходим все пиксели изображения и выбираем яркие (условие: средняя яркость равна 1)
-        for (int r = 0; r < segImg.rows; r++) {
+        for (int r = segImg.rows / 5 * 2; r < segImg.rows; r++) {
             for (int c = 0; c < segImg.cols; c++) {
                 cv::Vec3b color = segImg.at<cv::Vec3b>(r, c);
+                
                 int avg = (color[0] + color[1] + color[2]) / 3;
                 if (avg == 1) { // если яркий пиксель
                     totalBrightPixels++;
-                    // Проецируем точку через камеру
+
+                    // Проецируем точку
                     cv::Point2f projPt = camera.projectPoint({static_cast<float>(c), static_cast<float>(r)});
 
                     // Поворот точки
                     cv::Point2f rotatedPt = rotatePoint(projPt, pose.yaw);
+
                     // Если требуется добавить смещение по траектории (pose)
                     cv::Point2f worldPt = rotatedPt;
                     worldPt.x += static_cast<float>(pose.x);
                     worldPt.y += static_cast<float>(pose.y);
+
                     // Добавляем точку в глобальную карту (приращение, например, 10)
                     globalMap.addPoint(worldPt.x, worldPt.y, 5.0f);
                 }
