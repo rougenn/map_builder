@@ -7,16 +7,18 @@
 GridMapHandler::GridMapHandler(double lengthX,
                                double lengthY,
                                double resolution,
-                               const std::string& layerName)
+                               const std::string& layerName,
+                               double centerX,
+                               double centerY)
     : mainLayer_(layerName)
 {
     // Инициализируем геометрию карты:
-    // - Размер карты: (lengthX, lengthY) в метрах.
-    // - Разрешение: размер ячейки в метрах.
-    // - Центр карты: (0,0).
+    // Карта будет иметь физические размеры (lengthX, lengthY) в метрах,
+    // разрешение (размер ячейки) в метрах,
+    // а центр карты задается параметрами (centerX, centerY).
     gridMap_.setGeometry(grid_map::Length(lengthX, lengthY),
                          resolution,
-                         grid_map::Position(0.0, 0.0));
+                         grid_map::Position(centerX, centerY));
     gridMap_.add(mainLayer_, 0.0f);
 }
 
@@ -35,7 +37,6 @@ void GridMapHandler::addPoint(const std::string& layerName, double x, double y, 
     if (gridMap_.isInside(pos)) {
         grid_map::Index index;
         if (gridMap_.getIndex(pos, index)) {
-            // Используем метод at() с индексом
             gridMap_.at(layerName, index) += value;
         }
     }
@@ -56,7 +57,7 @@ bool GridMapHandler::saveLayerAsImage(const std::string& layerName, const std::s
     // Определяем минимальное и максимальное значение для нормализации.
     float minVal = std::numeric_limits<float>::max();
     float maxVal = std::numeric_limits<float>::lowest();
-    const grid_map::Matrix matrix = gridMap_.get(layerName);
+    const grid_map::Matrix matrix = gridMap_.get(mainLayer_);
     for (int i = 0; i < matrix.size(); i++) {
         float v = matrix(i);
         if (v < minVal) minVal = v;
@@ -67,7 +68,7 @@ bool GridMapHandler::saveLayerAsImage(const std::string& layerName, const std::s
     for (int r = 0; r < image.rows; r++) {
         for (int c = 0; c < image.cols; c++) {
             grid_map::Index index(c, r);
-            float value = gridMap_.at(layerName, index);
+            float value = gridMap_.at(mainLayer_, index);
             int pixelValue = 0;
             if (maxVal > minVal) {
                 pixelValue = static_cast<int>(std::round((value - minVal) / (maxVal - minVal) * 255));

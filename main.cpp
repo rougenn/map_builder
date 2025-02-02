@@ -2,12 +2,12 @@
 #include "GridMapHandler.hpp"
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <vector>
 
 int main()
 {
     // 1. Создаём камеру и вычисляем гомографию из 4 пар точек
     Camera camera;
-    // Пример: 4 пары (image -> world)
     std::vector<cv::Point2f> imgPts = {
         {414.f, 540.f},
         {617.f, 540.f},
@@ -26,38 +26,42 @@ int main()
     }
     std::cout << "Гомография:\n" << camera.getHomography() << std::endl;
 
-    // 2. Тест: warpImage
-    cv::Mat testImg = cv::imread("data/test.jpg");
+    // 2. Тест: warpImage (с сохранением результата для проверки)
+    cv::Mat testImg = cv::imread("/home/rougenn/projects/map_builder/data/segmentation/get.356/16363.segm.png");
     if (testImg.empty()) {
-        std::cerr << "Не открылось test.jpg\n";
+        std::cerr << "Не удалось загрузить тестовое изображение.\n";
     } else {
         cv::Mat warped = camera.warpImage(testImg);
         cv::imwrite("warped_test.png", warped);
     }
 
-    // 3. GridMapHandler по умолчанию (500×500м, 0.1 м/пикс)
-    GridMapHandler gridMap;
+    // 3. Создаём GridMapHandler с центром, чтобы покрыть проецированную область.
+    // Предположим, что проецированные точки находятся около (500, 930)
+    GridMapHandler gridMap(500.0, 500.0, 0.1, "road", 500.0, 930.0);
 
-    // 4. Пример: проекция точек из изображения и добавление их в карту
-    // (допустим, пройдёмся по ярким пикселям)
+    // 4. Проходимся по ярким пикселям тестового изображения и добавляем их в карту
+    int cnt = 0;
     if (!testImg.empty()) {
         for (int r = 0; r < testImg.rows; r++) {
             for (int c = 0; c < testImg.cols; c++) {
                 cv::Vec3b color = testImg.at<cv::Vec3b>(r, c);
                 int sum = color[0] + color[1] + color[2];
-                // Если яркий пиксель
-                if (sum > 600) {
+                // Если среднее значение пикселя равно 1 (как в вашем условии)
+                if ((sum / 3) == 1) {
+                    cnt++;
                     cv::Point2f worldPt = camera.projectPoint({(float)c, (float)r});
-                    // Добавим +1 в слой "road"
-                    gridMap.addPoint("road", worldPt.x, worldPt.y, 1.0f);
+                    gridMap.addPoint("road", worldPt.x, worldPt.y, 10.0f);
                 }
             }
         }
     }
+    std::cout << "Количество ярких пикселей: " << cnt << std::endl;
 
-    // 5. Сохраним результат
+    // 5. Сохраняем результат (тепловая карта)
     if (gridMap.saveLayerAsImage("road", "road_heatmap.png")) {
         std::cout << "Карта сохранена как road_heatmap.png\n";
+    } else {
+        std::cerr << "Не удалось сохранить карту.\n";
     }
 
     return 0;
