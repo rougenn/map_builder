@@ -27,7 +27,7 @@ double extractTimestamp(const std::string &filename) {
 }
 
 int main() {
-    // 1. Создаём камеру и вычисляем гомографию из 4 пар точек
+    // Создаём камеру и вычисляем гомографию из 4 пар точек
     Camera camera;
     std::vector<cv::Point2f> imgPts = {
         {414.f, 540.f},
@@ -55,7 +55,6 @@ int main() {
         return -1;
     }
 
-    // 3. Создаём GlobalGridMapHandler с центром, чтобы покрыть проецированную область.
     GlobalGridMapHandler globalMap(500.0, 0.1);
 
     std::string segFolder = "/home/rougenn/projects/map_builder/data/segmentation/get.356/";
@@ -87,14 +86,11 @@ int main() {
             continue;
         }
 
-        // Устанавливаем лимит для тестирования кода
         // ++cnt;
         // if (cnt > 200) break;
 
-        // Извлекаем временную метку (если используется для смещения; здесь можно использовать pose)
         double timestamp = extractTimestamp(filePath);
         std::clog << filePath << std::endl;
-        // Получаем ближайшую точку траектории для данного timestamp (если требуется)
         TrajectoryPoint pose;
         std::clog << timestamp << ' ';
         if (!trajReader.getClosestTrajectoryPoint(timestamp, pose)) {
@@ -104,7 +100,7 @@ int main() {
         std::clog << pose.x << ' ' << pose.y << ", " << pose.yaw << std::endl;
 
 
-        // Обходим все пиксели изображения и выбираем яркие (условие: средняя яркость равна 1)
+
         for (int r = segImg.rows / 5 * 2; r < segImg.rows; r++) {
             for (int c = 0; c < segImg.cols; c++) {
                 cv::Vec3b color = segImg.at<cv::Vec3b>(r, c);
@@ -132,7 +128,6 @@ int main() {
         }
     }
 
-    // 6. Сохраняем все квадранты (файлы будут иметь имена вида "quadrant_qx_qy.png")
     globalMap.saveAllQuadrants("quadrant");
 
 
