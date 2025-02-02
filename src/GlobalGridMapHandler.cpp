@@ -12,8 +12,7 @@ QuadrantKey GlobalGridMapHandler::getQuadrantKey(double x, double y) const {
 GlobalGridMapHandler::GlobalGridMapHandler(double quadrantSize, double resolution)
     : quadrantSize_(quadrantSize), resolution_(resolution) {}
 
-void GlobalGridMapHandler::addPoint(double x, double y, float value)
-{
+void GlobalGridMapHandler::addPoint(double x, double y, float value) {
     QuadrantKey key = getQuadrantKey(x, y);
     if (quadrants_.find(key) == quadrants_.end()) {
         // Центр квадранта: ((qx + 0.5) * quadrantSize, (qy + 0.5) * quadrantSize)
@@ -24,18 +23,16 @@ void GlobalGridMapHandler::addPoint(double x, double y, float value)
     quadrants_[key]->addPoint(x, y, value);
 }
 
-bool GlobalGridMapHandler::saveQuadrant(const QuadrantKey &key, const std::string &fileName) const
-{
+bool GlobalGridMapHandler::saveQuadrant(const QuadrantKey &key, const std::string &fileName) const {
     auto it = quadrants_.find(key);
     if (it == quadrants_.end()) {
-        std::cerr << "[GlobalGridMapHandler] Квадрант (" << key.first << ", " << key.second << ") не существует.\n";
+        std::cerr << "Квадрант (" << key.first << ", " << key.second << ") не существует.\n";
         return false;
     }
     return it->second->saveAsImage(fileName);
 }
 
-void GlobalGridMapHandler::saveAllQuadrants(const std::string &prefix) const
-{
+void GlobalGridMapHandler::saveAllQuadrants(const std::string &prefix) const {
     for (const auto &item : quadrants_) {
         QuadrantKey key = item.first;
         std::ostringstream oss;

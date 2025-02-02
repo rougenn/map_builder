@@ -47,14 +47,3 @@ cv::Point2f Camera::projectPoint(const cv::Point2f& imagePoint) const {
         return dstPts[0];
     return cv::Point2f(0.f, 0.f);
 }
-
-cv::Mat Camera::warpImage(const cv::Mat& inputImage, const cv::Size& outputSize) const {
-    if (inputImage.empty())
-        throw std::runtime_error("Camera::warpImage: input image is empty!");
-    
-    cv::Mat output;
-    cv::Size sizeForWarp = (outputSize.width > 0 && outputSize.height > 0) ? outputSize : cv::Size(1000, 1000);
-    cv::warpPerspective(inputImage, output, homography_, sizeForWarp,
-                        cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar(0,0,0));
-    return output;
-}

@@ -12,25 +12,23 @@ struct TrajectoryPoint
     double time; ///< Время (секунды)
     double x;    ///< Координата X (метры)
     double y;    ///< Координата Y (метры)
-    double yaw;  ///< Угол курса (градусы, уже "исправленный" под ось X)
+    double yaw;  ///< Угол
 };
 
 /**
- * @brief Класс чтения траектории (например, из .ext1)
+ * @brief Класс чтения траектории (из трк.эксти1)
  */
 class TrajectoryReader
 {
 public:
     /**
-     * @param extFilePath Путь к файлу, в котором есть:
-     *        time.s, local.x.m, local.y.m, local_yaw.grad (и т.п.)
+     * @param extFilePath Путь к файлу, в котором есть как минимум
+     *        time.s, local.x.m, local.y.m, local_yaw.grad
      */
     explicit TrajectoryReader(const std::string& extFilePath);
 
     /**
      * @brief Считывает файл и заполняет вектор trajectory_
-     *        Причём *сразу* добавляет +90° к local_yaw.grad,
-     *        чтобы привести угол к "оси X" (против часовой стрелки).
      * @return true, если чтение прошло успешно
      */
     bool readExtFile();

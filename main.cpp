@@ -8,7 +8,6 @@
 #include <vector>
 
 cv::Point2f rotatePoint(const cv::Point2f &pt, float angleDegrees) {
-
     float rad = angleDegrees * CV_PI / 180.0f;
     float cosA = std::cos(rad);
     float sinA = std::sin(rad);
@@ -49,7 +48,7 @@ int main() {
     std::cout << "Гомография:\n" << camera.getHomography() << std::endl;
 
 
-    // Загружаем данные траектории (если нужны для смещения; здесь просто для примера)
+    // Загружаем данные траектории
     TrajectoryReader trajReader("/home/rougenn/projects/map_builder/data/get.356.trk.ext1");
     if (!trajReader.readExtFile()) {
         std::cerr << "Ошибка чтения данных траектории!\n";
@@ -71,7 +70,7 @@ int main() {
         }
     }
 
-    // Сортируем по имени файла (filename)
+    // Сортируем по имени файла
     std::sort(entries.begin(), entries.end(),
               [](const std::filesystem::directory_entry &a, const std::filesystem::directory_entry &b) {
                   return extractTimestamp(a.path().string()) < extractTimestamp(b.path().string());
@@ -90,7 +89,8 @@ int main() {
 
         // Устанавливаем лимит для тестирования кода
         ++cnt;
-        if (cnt > 200) break;
+        if (cnt > 2000) break;
+        if (cnt % 10) continue;
 
         // Извлекаем временную метку (если используется для смещения; здесь можно использовать pose)
         double timestamp = extractTimestamp(filePath);

@@ -5,15 +5,12 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
-#include <algorithm> // для std::sort
+#include <algorithm>
 
 TrajectoryReader::TrajectoryReader(const std::string& extFilePath)
-    : extFilePath_(extFilePath)
-{
-}
+    : extFilePath_(extFilePath) {}
 
-bool TrajectoryReader::readExtFile()
-{
+bool TrajectoryReader::readExtFile() {
     std::ifstream ifs(extFilePath_);
     if (!ifs.is_open()) {
         std::cerr << "Не удалось открыть файл: " << extFilePath_ << std::endl;
@@ -84,7 +81,7 @@ bool TrajectoryReader::readExtFile()
         tp.time = 0.0;
         tp.x    = 0.0;
         tp.y    = 0.0;
-        tp.yaw  = 0.0; // в градусах (ориентация от оси X)
+        tp.yaw  = 0.0;
 
         if (idx_time >= 0 && idx_time < (int)cols.size()) {
             tp.time = std::stod(cols[idx_time]);

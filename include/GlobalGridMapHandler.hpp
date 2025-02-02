@@ -5,7 +5,7 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <utility> // для std::pair
+#include <utility>
 
 // Ключ квадранта – пара (qx, qy)
 using QuadrantKey = std::pair<int, int>;
@@ -17,8 +17,7 @@ using QuadrantKey = std::pair<int, int>;
  * она попадает, и, если объект для этого квадранта ещё не создан, создаёт его.
  * Затем точка добавляется в соответствующий квадрант.
  */
-class GlobalGridMapHandler
-{
+class GlobalGridMapHandler {
 public:
     /**
      * @brief Конструктор глобальной карты.

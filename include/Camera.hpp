@@ -42,15 +42,6 @@ public:
     cv::Point2f projectPoint(const cv::Point2f& imagePoint) const;
 
     /**
-     * @brief Применяет перспективное преобразование ко всему изображению.
-     * @param inputImage Исходное изображение.
-     * @param outputSize Размер выходного изображения. Если не задан (или равен (0,0)),
-     *                   используется размер 1000×1000.
-     * @return Изображение после warpPerspective.
-     */
-    cv::Mat warpImage(const cv::Mat& inputImage, const cv::Size& outputSize = cv::Size()) const;
-
-    /**
      * @brief Возвращает копию текущей гомографии.
      */
     cv::Mat getHomography() const { return homography_.clone(); }

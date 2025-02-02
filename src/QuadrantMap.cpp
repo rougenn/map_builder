@@ -4,16 +4,14 @@
 #include <limits>
 #include <algorithm>
 
-QuadrantMap::QuadrantMap(double width, double height, double resolution, double centerX, double centerY)
-{
+QuadrantMap::QuadrantMap(double width, double height, double resolution, double centerX, double centerY) {
     gridMap_.setGeometry(grid_map::Length(width, height),
                          resolution,
                          grid_map::Position(centerX, centerY));
     gridMap_.add(LAYER_NAME, 0.0f);
 }
 
-void QuadrantMap::addPoint(double x, double y, float value)
-{
+void QuadrantMap::addPoint(double x, double y, float value) {
     grid_map::Position pos(x, y);
     if (gridMap_.isInside(pos)) {
         grid_map::Index index;
@@ -23,10 +21,9 @@ void QuadrantMap::addPoint(double x, double y, float value)
     }
 }
 
-bool QuadrantMap::saveAsImage(const std::string &fileName) const
-{
+bool QuadrantMap::saveAsImage(const std::string &fileName) const {
     if (!gridMap_.exists(LAYER_NAME)) {
-        std::cerr << "[QuadrantMap] Слой \"" << LAYER_NAME << "\" не найден.\n";
+        std::cerr << "Слой \"" << LAYER_NAME << "\" не найден.\n";
         return false;
     }
 
@@ -57,7 +54,7 @@ bool QuadrantMap::saveAsImage(const std::string &fileName) const
     cv::Mat colorMap;
     cv::applyColorMap(image, colorMap, cv::COLORMAP_JET);
     if (!cv::imwrite(fileName, colorMap)) {
-        std::cerr << "[QuadrantMap] Не удалось сохранить изображение: " << fileName << "\n";
+        std::cerr << "Не удалось сохранить изображение: " << fileName << "\n";
         return false;
     }
     return true;
