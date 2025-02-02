@@ -10,9 +10,7 @@ QuadrantKey GlobalGridMapHandler::getQuadrantKey(double x, double y) const {
 }
 
 GlobalGridMapHandler::GlobalGridMapHandler(double quadrantSize, double resolution)
-    : quadrantSize_(quadrantSize), resolution_(resolution)
-{
-}
+    : quadrantSize_(quadrantSize), resolution_(resolution) {}
 
 void GlobalGridMapHandler::addPoint(double x, double y, float value)
 {

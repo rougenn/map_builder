@@ -44,12 +44,6 @@ public:
     bool getClosestTrajectoryPoint(double imageTime, TrajectoryPoint& outPoint) const;
 
     /**
-     * @brief Проверка согласованности yaw (с учётом +90) с (dx, dy)
-     *        Просто выводит в консоль отклонения для соседних точек.
-     */
-    void checkYawConsistency() const;
-
-    /**
      * @return Константная ссылка на весь вектор точек
      */
     const std::vector<TrajectoryPoint>& getTrajectory() const { return trajectory_; }

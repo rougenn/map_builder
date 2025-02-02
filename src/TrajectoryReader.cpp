@@ -20,7 +20,7 @@ bool TrajectoryReader::readExtFile()
         return false;
     }
 
-    // Считываем заголовок (первая строка)
+    // Считываем заголовок
     std::string header;
     if (!std::getline(ifs, header)) {
         std::cerr << "Файл пуст или не содержит заголовка: " << extFilePath_ << std::endl;
@@ -96,12 +96,7 @@ bool TrajectoryReader::readExtFile()
             tp.y    = std::stod(cols[idx_localY]);
         }
         if (idx_localYaw >= 0 && idx_localYaw < (int)cols.size()) {
-            double localYaw = std::stod(cols[idx_localYaw]);
-            // Добавляем +90°, чтобы привести к системе, где 0° значит "вправо"
-            tp.yaw = localYaw + 90.0;
-            // при желании можно нормализовать в диапазоне [-180..180] или [0..360]
-            while (tp.yaw > 180.0)  tp.yaw -= 360.0;
-            while (tp.yaw < -180.0) tp.yaw += 360.0;
+            tp.yaw = std::stod(cols[idx_localYaw]);
         }
 
         // Добавляем в вектор, если время > 0
@@ -126,53 +121,22 @@ bool TrajectoryReader::readExtFile()
     return true;
 }
 
-bool TrajectoryReader::getClosestTrajectoryPoint(double imageTime, TrajectoryPoint& outPoint) const
-{
+
+bool TrajectoryReader::getClosestTrajectoryPoint(double imageTime, TrajectoryPoint& outPoint) const {
     if (trajectory_.empty()) {
         return false;
     }
+    
+    auto it = std::lower_bound(trajectory_.begin(), trajectory_.end(), imageTime,
+                               [](const TrajectoryPoint &tp, double time) {
+                                   return tp.time < time;
+                               });
 
-    double minDiff = std::numeric_limits<double>::max();
-    bool found = false;
-
-    for (auto & tp : trajectory_) {
-        double d = std::fabs(tp.time - imageTime);
-        if (d < minDiff) {
-            minDiff = d;
-            outPoint = tp;
-            found = true;
-        }
+    if (it != trajectory_.end()) {
+        outPoint = *it;
+        return true;
     }
-    return found;
+    
+    return false;
 }
 
-void TrajectoryReader::checkYawConsistency() const
-{
-    if (trajectory_.size() < 2) {
-        std::cout << "Недостаточно точек для проверки yaw.\n";
-        return;
-    }
-
-    // Сравниваем угол, полученный из (dx, dy), с tp1.yaw (уже "исправленным").
-    for (size_t i = 0; i < trajectory_.size() - 1; i++) {
-        const auto& tp1 = trajectory_[i];
-        const auto& tp2 = trajectory_[i+1];
-
-        double dx = tp2.x - tp1.x;
-        double dy = tp2.y - tp1.y;
-        double angleDeg = std::atan2(dy, dx) * 180.0 / M_PI;
-
-        double diff = angleDeg - tp1.yaw;
-        // нормализуем diff в [-180..180]
-        while (diff > 180.0)  diff -= 360.0;
-        while (diff < -180.0) diff += 360.0;
-
-        std::cout << "i=" << i << " time=" << tp1.time
-                  << " -> time=" << tp2.time
-                  << " dx=" << dx << " dy=" << dy
-                  << " angleDeg=" << angleDeg
-                  << " yaw=" << tp1.yaw
-                  << " diff=" << diff
-                  << " (град)\n";
-    }
-}
