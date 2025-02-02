@@ -23,7 +23,8 @@ add_executable(TramPathMapping
     main.cpp
     src/TrajectoryReader.cpp
     src/Camera.cpp
-    src/GridMapHandler.cpp
+    src/GlobalGridMapHandler.cpp
+    src/QuadrantMap.cpp
 )
 
 # Линкуем с необходимыми библиотеками:

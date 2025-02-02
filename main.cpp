@@ -1,7 +1,10 @@
 #include "Camera.hpp"
-#include "GridMapHandler.hpp"
+#include "TrajectoryReader.hpp"
+#include "GlobalGridMapHandler.hpp" 
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <filesystem>
+#include <sstream>
 #include <vector>
 
 int main()
@@ -35,9 +38,9 @@ int main()
         cv::imwrite("warped_test.png", warped);
     }
 
-    // 3. Создаём GridMapHandler с центром, чтобы покрыть проецированную область.
+    // 3. Создаём GlobalGridMapHandler с центром, чтобы покрыть проецированную область.
     // Предположим, что проецированные точки находятся около (500, 930)
-    GridMapHandler gridMap(500.0, 500.0, 0.1, "road", 500.0, 930.0);
+    GlobalGridMapHandler gridMap(500.0, 0.1);
 
     // 4. Проходимся по ярким пикселям тестового изображения и добавляем их в карту
     int cnt = 0;
@@ -50,7 +53,7 @@ int main()
                 if ((sum / 3) == 1) {
                     cnt++;
                     cv::Point2f worldPt = camera.projectPoint({(float)c, (float)r});
-                    gridMap.addPoint("road", worldPt.x, worldPt.y, 10.0f);
+                    gridMap.addPoint(worldPt.x, worldPt.y, 10.0f);
                 }
             }
         }
@@ -58,11 +61,7 @@ int main()
     std::cout << "Количество ярких пикселей: " << cnt << std::endl;
 
     // 5. Сохраняем результат (тепловая карта)
-    if (gridMap.saveLayerAsImage("road", "road_heatmap.png")) {
-        std::cout << "Карта сохранена как road_heatmap.png\n";
-    } else {
-        std::cerr << "Не удалось сохранить карту.\n";
-    }
+    gridMap.saveAllQuadrants("quadrant");
 
     return 0;
 }
