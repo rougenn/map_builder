@@ -21,7 +21,7 @@ class GlobalGridMapHandler {
 public:
     /**
      * @brief Конструктор глобальной карты.
-     * @param quadrantSize Размер одного квадранта в метрах (например, 500).
+     * @param quadrantSize Размер одного квадранта в метрах
      * @param resolution Разрешение для каждого квадранта (м/пикс).
      */
     GlobalGridMapHandler(double quadrantSize = 500.0, double resolution = 0.1);
@@ -30,7 +30,7 @@ public:
      * @brief Добавляет точку в глобальную карту.
      * @param x Координата X в метрах.
      * @param y Координата Y в метрах.
-     * @param value Приращение (по умолчанию +1).
+     * @param value Приращение
      */
     void addPoint(double x, double y, float value = 1.0f);
 
@@ -44,7 +44,6 @@ public:
 
     /**
      * @brief Сохраняет все существующие квадранты, используя заданный префикс для имен файлов.
-     * Файлы будут иметь имена вида: prefix_qx_qy.png.
      */
     void saveAllQuadrants(const std::string &prefix) const;
 
@@ -54,7 +53,6 @@ private:
 
     double quadrantSize_; // размер одного квадранта (в метрах)
     double resolution_;   // разрешение для каждого квадранта (м/пикс)
-    // Словарь квадрантов: ключ – пара (qx, qy), значение – объект QuadrantMap.
     std::map<QuadrantKey, std::unique_ptr<QuadrantMap>> quadrants_;
 };
 

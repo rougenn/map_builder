@@ -29,7 +29,7 @@ public:
 
     /**
      * @brief Считывает файл и заполняет вектор trajectory_
-     * @return true, если чтение прошло успешно
+     * @return true, если успешно
      */
     bool readExtFile();
 

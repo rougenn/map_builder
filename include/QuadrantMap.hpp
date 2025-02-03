@@ -27,7 +27,7 @@ public:
      * @brief Добавляет точку (увеличивает значение) в квадранте
      * @param x Координата X в метрах
      * @param y Координата Y в метрах
-     * @param value Приращение (по умолчанию +1)
+     * @param value Приращение
      */
     void addPoint(double x, double y, float value = 1.0f);
 
