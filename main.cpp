@@ -121,7 +121,7 @@ int main() {
                     worldPt.y += static_cast<float>(pose.y);
 
                     // Добавляем точку в глобальную карту
-                    // !!!!!!!!!! Костыль, зеркалим относительно OY
+                    // зеркалим относительно OY
                     globalMap.addPoint(-worldPt.x, worldPt.y, 6.0f);
                 }
             }
